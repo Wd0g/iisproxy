@@ -89,7 +89,7 @@ func proxyDial(ctx context.Context, network, addr string) (net.Conn, error) {
 		Origin:   u,
 		Header: http.Header{
 			//FIXME: 把要连接的地址放在头里可能会被针对
-			"X-Forwarded-Host": []string{addr},
+			"X-Debug-Host": []string{addr},
 		},
 	})
 	if err != nil {

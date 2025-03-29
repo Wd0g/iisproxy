@@ -13,6 +13,19 @@
 1. 可上传`ashx`文件,见 [Handler.ashx](dist/Handler.ashx)
 2. IIS >= 8, 因为从IIS8开始才支持WebSocket协议, 见<https://docs.microsoft.com/en-us/iis/get-started/whats-new-in-iis-8/iis-80-websocket-protocol-support>
 
+## 配置
+
+httpRuntime的targetFramework需要>= 4.5,测试了4.0不行
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <system.web>
+        <httpRuntime targetFramework="4.5" />
+    </system.web>
+</configuration>
+```
+
 ## 命令行参数
 
 ```txt

